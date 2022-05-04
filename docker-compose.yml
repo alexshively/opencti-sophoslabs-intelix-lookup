@@ -1,6 +1,6 @@
 version: '3'
 services:
-  connector-template:
+  opencti-intelix-connector:
     image: 0xbennyv/sophoslabs-intelix-lookup:latest
     environment:
       - OPENCTI_URL=http://opencti:8080
