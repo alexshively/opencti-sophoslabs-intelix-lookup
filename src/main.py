@@ -37,8 +37,11 @@ class ConnectorStart:
             'Content-Type': 'application/x-www-form-urlencoded'
             }
         r = requests.post('https://api.labs.sophos.com/oauth2/token', headers=h, data=d)
-        r = r.json()
-        return r['access_token']
+        if r.ok:
+            r = r.json()
+            return r['access_token']
+        else:
+            print("Error: Unable to get Access Token.")
 
 
     def _process_message(self, data) -> str:
