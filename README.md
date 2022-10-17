@@ -9,7 +9,7 @@ Before a pull request is submitted to the [OpenCTI Project](https://github.com/O
 	 - INTELIX_CLIENT_ID=From_Step_1
 	 - INTELIX_CLIENT_SECRET=From_Step_1
 	 - INTELIX_REGION_URI=https://us.api.labs.sophos.com
-	 - INTELIX_SCOPE=Url,IPv4-Addr,Domain,File,File-Sha256,Artifact
+	 - INTELIX_SCOPE=Url,IPv4-Addr,Artifact
  3. If you're using docker-compose without portainer to manage the OpenCTI Stack the process is the same however, instead of adding the environment variables replace the below values with the required information.
 	 - ${INTELIX_CLIENT_ID}
 	 - ${INTELIX_CLIENT_SECRET}
