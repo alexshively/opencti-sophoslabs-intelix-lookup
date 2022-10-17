@@ -11,7 +11,7 @@ def intelixlookup(token, type, observable, regionuri) -> dict:
     elif type == "Url" or type == "Domain":
         observable = (urllib.parse.quote(observable.encode('utf8'), safe=''))
         u = f"{regionuri}/lookup/urls/v1/{observable}"
-    elif type == "Artifact" and validators.sha256(observable):
+    elif type == "Artifact" or type == "File" and validators.sha256(observable):
         u = f"{regionuri}/lookup/files/v1/{observable}"
     else:
         raise ValueError(
@@ -32,7 +32,7 @@ def intelixlookup(token, type, observable, regionuri) -> dict:
     goodcolor = '#32c822'
 
     # File reponses
-    if type == "Artifact":
+    if type == "Artifact" or type == "File":
         if 'reputationScore' in j:
             response['reputationScore'] = j['reputationScore']
             if j['reputationScore'] <= 19:
@@ -234,9 +234,9 @@ def intelixlookup(token, type, observable, regionuri) -> dict:
             logging.info(j['riskLevel'])
             if j['riskLevel'] == 'HIGH' or j['riskLevel'] == 'MEDIUM':
                 response['labelcolor'] = maliciouscolor
-            elif j['riskLevel'] == 'UNCLASSIFIED' or j['riskLevel'] == 'LOW':
+            elif j['riskLevel'] == 'UNCLASSIFIED':
                 response['labelcolor'] = warncolor
-            elif j['riskLevel'] == 'TRUSTED':
+            elif j['riskLevel'] == 'TRUSTED' or j['riskLevel'] == 'LOW':
                 response['labelcolor'] = goodcolor
         else:
             response['labelcolor'] = goodcolor
