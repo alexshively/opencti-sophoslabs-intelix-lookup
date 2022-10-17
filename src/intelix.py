@@ -8,7 +8,7 @@ def intelixlookup(token, type, observable, regionuri) -> dict:
     # use Validators to redirect the observable to the correct Intelix endpoint
     if type == "IPv4-Addr" and validators.ipv4(observable):
         u = f"{regionuri}/lookup/ips/v1/{observable}"
-    elif type == "Url" or type == "Domain":
+    elif type == "Url":
         observable = (urllib.parse.quote(observable.encode('utf8'), safe=''))
         u = f"{regionuri}/lookup/urls/v1/{observable}"
     elif type == "Artifact" and validators.sha256(observable):
@@ -148,7 +148,7 @@ def intelixlookup(token, type, observable, regionuri) -> dict:
             'PROD_MILITANCY_AND_EXTREMIST': 'Adult. Sites promoting or sponsored by groups advocating anti-government beliefs. Generally blocked as inappropriate.',
             'PROD_MILITARY': 'BizGov. Sites sponsored by armed forces organizations or their agencies. May be allowed in more restrictive contexts.',
             'PROD_NEWLY_REGISTERED_WEBSITES': 'Risky. Sites using recently registered domains that have yet to be assessed or whose content has yet to be established. Sites hosted on recently-registered domains are more likely to be poorly managed or deliberately malicious in nature.',
-            'PROD_NEWS Entertainment': 'Sites that offer news and opinion about current events. Personal browsing may not be permitted in work environments.',
+            'PROD_NEWS': 'Sites that offer news and opinion about current events. Personal browsing may not be permitted in work environments.',
             'PROD_NGOS_AND_NON_PROFITS': 'BizGov. Sites relating to charitable and non-profit organizations whether local or global. May be allowed in more restrictive contexts.',
             'PROD_NUDITY': 'Sexual. Sites containing non-sexual depictions of human forms in varying states of undress. May be OK where more explicit material is not allowed, although still inappropriate for kids.',
             'PROD_ONLINE_CHAT': 'Social Networking. Sites enabling one-to-one or group real-time messaging. Risks of time-wasting, data sharing, inappropriate communications (chinese walls in financial institutions), unmonitored communications.',
@@ -234,9 +234,9 @@ def intelixlookup(token, type, observable, regionuri) -> dict:
             logging.info(j['riskLevel'])
             if j['riskLevel'] == 'HIGH' or j['riskLevel'] == 'MEDIUM':
                 response['labelcolor'] = maliciouscolor
-            elif j['riskLevel'] == 'UNCLASSIFIED' or j['riskLevel'] == 'LOW':
+            elif j['riskLevel'] == 'UNCLASSIFIED':
                 response['labelcolor'] = warncolor
-            elif j['riskLevel'] == 'TRUSTED':
+            elif j['riskLevel'] == 'TRUSTED' or j['riskLevel'] == 'LOW':
                 response['labelcolor'] = goodcolor
         else:
             response['labelcolor'] = goodcolor
