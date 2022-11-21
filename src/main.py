@@ -1,12 +1,12 @@
 import os
 import yaml
 import time
-import json
 import base64
 import requests
 
 from pycti import OpenCTIConnectorHelper, get_config_variable
 from intelix import intelixlookup
+
 
 class ConnectorStart:
     def __init__(self):
@@ -29,20 +29,20 @@ class ConnectorStart:
         )
         self.token = self._get_token()
 
-    def _get_token(self): 
+    def _get_token(self):
         creds = f"{self.client_id}:{self.client_secret}"
         t = base64.b64encode(creds.encode("UTF-8")).decode("ascii")
-        d = {'grant_type': 'client_credentials'}
-        h = {'Authorization': f"Basic {t}",
-            'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        r = requests.post('https://api.labs.sophos.com/oauth2/token', headers=h, data=d)
+        d = {"grant_type": "client_credentials"}
+        h = {
+            "Authorization": f"Basic {t}",
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
+        r = requests.post("https://api.labs.sophos.com/oauth2/token", headers=h, data=d)
         if r.ok:
             r = r.json()
-            return r['access_token']
+            return r["access_token"]
         else:
             print("Error: Unable to get Access Token.")
-
 
     def _process_message(self, data) -> str:
         entity_id = data["entity_id"]
@@ -52,20 +52,21 @@ class ConnectorStart:
         observable_value = observable["observable_value"]
         observable_type = observable["entity_type"]
         self.helper.log_info(observable)
-        analysis = intelixlookup(self.token, observable_type, observable_value, self.intelix_region_uri)
+        analysis = intelixlookup(
+            self.token, observable_type, observable_value, self.intelix_region_uri
+        )
         self.helper.log_info(analysis)
         return self._send_knowledge(observable_id, analysis, observable_value)
-
 
     def _send_knowledge(self, observable_id, analysis, observable_value):
         # Create external reference
         external_reference = self.helper.api.external_reference.create(
             source_name=f"SophosLabs Intelix {observable_value}",
-            url=analysis['url'],
+            url=analysis["url"],
             description=f"SophosLabs Intelix Results: \
                         \nDescription:  {analysis['description']} \
                         \nCategory:     {analysis['category'].title()}",
-        )   
+        )
 
         self.helper.api.stix_cyber_observable.add_external_reference(
             id=observable_id,
@@ -73,8 +74,7 @@ class ConnectorStart:
         )
 
         label = self.helper.api.label.create(
-            value=analysis['category'], 
-            color=analysis['labelcolor']
+            value=analysis["category"], color=analysis["labelcolor"]
         )
 
         self.helper.api.stix_cyber_observable.add_label(
@@ -86,6 +86,7 @@ class ConnectorStart:
     # Start the main loop
     def start(self) -> None:
         self.helper.listen(self._process_message)
+
 
 if __name__ == "__main__":
     try:
