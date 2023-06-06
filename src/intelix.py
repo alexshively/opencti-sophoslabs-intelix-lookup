@@ -8,7 +8,7 @@ def intelixlookup(token, type, observable, regionuri) -> dict:
     # use Validators to redirect the observable to the correct Intelix endpoint
     if type == "IPv4-Addr" and validators.ipv4(observable):
         u = f"{regionuri}/lookup/ips/v1/{observable}"
-    elif type == "Url":
+    elif type == "Url" or type == "Domain":
         observable = urllib.parse.quote(observable.encode("utf8"), safe="")
         u = f"{regionuri}/lookup/urls/v1/{observable}"
     elif type == "Artifact" and validators.sha256(observable):
