@@ -47,13 +47,12 @@ class ConnectorStart:
     def _process_message(self, data) -> str:
         entity_id = data["entity_id"]
         observable = self.helper.api.stix_cyber_observable.read(id=entity_id)
-
         observable_id = observable["id"]
         observable_value = observable["observable_value"]
         observable_type = observable["entity_type"]
         self.helper.log_info(observable)
         analysis = intelixlookup(
-            self.token, observable_type, observable_value, self.intelix_region_uri
+            self.token, observable_value, self.intelix_region_uri, observable_type
         )
         self.helper.log_info(analysis)
         return self._send_knowledge(observable_id, analysis, observable_value)
