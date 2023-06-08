@@ -42,7 +42,7 @@ class ConnectorStart:
             r = r.json()
             return r["access_token"]
         else:
-            print("Error: Unable to get Access Token.")
+            raise ValueError("Unable to authenticate with Intelix")
 
     def _process_message(self, data) -> str:
         entity_id = data["entity_id"]
@@ -92,6 +92,5 @@ if __name__ == "__main__":
         openctitest = ConnectorStart()
         openctitest.start()
     except Exception as e:
-        print(e)
         time.sleep(10)
         exit(0)
