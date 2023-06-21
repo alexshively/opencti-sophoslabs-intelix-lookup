@@ -40,6 +40,7 @@ class ConnectorStart:
         r = requests.post("https://api.labs.sophos.com/oauth2/token", headers=h, data=d)
         if r.ok:
             r = r.json()
+            self.expires_in = int(time.time()) + r["expires_in"]
             return r["access_token"]
         else:
             raise ValueError("Unable to authenticate with Intelix")
@@ -51,6 +52,8 @@ class ConnectorStart:
         observable_value = observable["observable_value"]
         observable_type = observable["entity_type"]
         self.helper.log_info(observable)
+        if int(time.time()) >= self.expires_in:
+            self.token = self._get_token()
         analysis = intelixlookup(
             self.token, observable_value, self.intelix_region_uri, observable_type
         )
