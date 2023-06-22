@@ -236,6 +236,12 @@ def intelixlookup(token, observable, regionuri, observable_type) -> dict:
             observablecategory = j["productivityCategory"]
         elif "securityCategory" in j:
             observablecategory = j["securityCategory"]
+        else:
+            response["description"] = "Unknown to SophosLabs"
+            response["category"] = "Unknown"
+            response["labelcolor"] = goodcolor
+
+            return response
 
         # Grab the Description from the DICT
         response["description"] = intelixdescriptions[observablecategory]
